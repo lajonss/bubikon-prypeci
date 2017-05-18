@@ -24,6 +24,10 @@ public class AKM : MonoBehaviour {
     [SerializeField]
     private Rigidbody _Rocket;
 
+    [SerializeField]
+    private float _FireRate;
+
+    private float _FireRateCounter = 0f;
     private EllipsoidParticleEmitter _Sparks;
 	// Use this for initialization
 	void Start () {
@@ -35,9 +39,11 @@ public class AKM : MonoBehaviour {
 	void Update () {
         Vector3 fwd = transform.TransformDirection(Vector3.forward);
         RaycastHit hit;
+        _FireRateCounter = max(_FireRateCounter - Time.deltaTime, 0f);
 
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire1") && _FireRateCounter <= 0f)
         {
+            _FireRateCounter = _FireRate;
             _Sparks.Emit();
             //audio.Play(); TODO
             /*
@@ -66,5 +72,10 @@ public class AKM : MonoBehaviour {
             transform.localPosition = _DefaultPosition;
             transform.localEulerAngles = _DefaultRotation;
         }
+    }
+
+    private static float max(float a, float b)
+    {
+        return a > b ? a : b;
     }
 }
