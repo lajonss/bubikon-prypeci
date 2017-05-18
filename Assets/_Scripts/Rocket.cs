@@ -18,24 +18,18 @@ public class Rocket : MonoBehaviour {
     
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.name.CompareTo("FPSController") != 0)
+        if (collision.collider.name.CompareTo("RigidBodyFPSController") != 0)
         {
             var colliders = Physics.OverlapSphere(transform.position, _Radius);
             foreach(var collider in colliders)
             {
-                Debug.Log(collider.gameObject.name);
                 var rigidBody = collider.GetComponent<Rigidbody>();
                 if (rigidBody != null)
                 {
                     var dist = collider.gameObject.transform.position - transform.position;
                     var force = dist.normalized * _Force / (dist.magnitude + 0.1f) * Random.Range(0.5f, 2f);
                     
-                    if (rigidBody.name.Equals("FPSController"))
-                    {
-                        rigidBody.GetComponent<FirstPersonController>().ForceJump();
-                    }
-                    rigidBody.AddExplosionForce(_Force, transform.position, _Radius);
-                    //rigidBody.AddForce(force, ForceMode.Impulse);
+                    rigidBody.AddForce(force, ForceMode.Impulse);
                 }
             }
             AudioSource explosionS = Instantiate(_ExplosionHolder, transform.position, transform.rotation) as AudioSource;
