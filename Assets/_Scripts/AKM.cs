@@ -9,6 +9,18 @@ public class AKM : MonoBehaviour {
     [SerializeField]
     private float _Range;
 
+    [SerializeField]
+    private Vector3 _DefaultPosition;
+
+    [SerializeField]
+    private Vector3 _DefaultRotation;
+
+    [SerializeField]
+    private Vector3 _ReadyPosition;
+
+    [SerializeField]
+    private Vector3 _ReadyRotation;
+
     private EllipsoidParticleEmitter _Sparks;
 	// Use this for initialization
 	void Start () {
