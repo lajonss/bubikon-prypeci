@@ -21,6 +21,9 @@ public class AKM : MonoBehaviour {
     [SerializeField]
     private Vector3 _ReadyRotation;
 
+    [SerializeField]
+    private Rigidbody _Rocket;
+
     private EllipsoidParticleEmitter _Sparks;
 	// Use this for initialization
 	void Start () {
@@ -37,7 +40,7 @@ public class AKM : MonoBehaviour {
         {
             _Sparks.Emit();
             //audio.Play(); TODO
-
+            /*
             if (Physics.Raycast(transform.position, fwd, out hit))
             {
                 if (hit.transform.tag == "Enemy" && hit.distance < _Range)
@@ -49,7 +52,19 @@ public class AKM : MonoBehaviour {
                 {
                     Debug.Log("Trafiona Sciana");
                 }
-            }
+            } //kod dla karabinu*/ 
+            Rigidbody rocket = Instantiate(_Rocket, transform.position, transform.rotation) as Rigidbody;
+            rocket.AddForce(transform.TransformDirection(Vector3.forward * 1000));
+        }
+        if (Input.GetButtonDown("Fire2"))
+        {
+            transform.localPosition = _ReadyPosition;
+            transform.localEulerAngles = _ReadyRotation;
+        }
+        if (Input.GetButtonUp("Fire2"))
+        {
+            transform.localPosition = _DefaultPosition;
+            transform.localEulerAngles = _DefaultRotation;
         }
     }
 }
