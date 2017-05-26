@@ -15,6 +15,14 @@ public class Rocket : MonoBehaviour {
     private float _Radius;
     [SerializeField]
     private float _Force;
+
+    private float _ExplosionTime = 2.5f;
+
+    private Renderer _Renderer;
+    private Collider _Collider;
+
+    private AudioSource _ExplosionSource;
+    private GameObject _ExplosionObject;
     
     private void OnCollisionEnter(Collision collision)
     {
@@ -32,16 +40,26 @@ public class Rocket : MonoBehaviour {
                     rigidBody.AddForce(force, ForceMode.Impulse);
                 }
             }
-            AudioSource explosionS = Instantiate(_ExplosionHolder, transform.position, transform.rotation) as AudioSource;
-            explosionS.clip = _ExplosionSound;
-            explosionS.Play();
-            Instantiate(_Explosion, transform.position, transform.rotation);
-            Destroy(gameObject);
+            _ExplosionSource = Instantiate(_ExplosionHolder, transform.position, transform.rotation) as AudioSource;
+            _ExplosionSource.clip = _ExplosionSound;
+            _ExplosionSource.Play();
+            _ExplosionObject = Instantiate(_Explosion, transform.position, transform.rotation);
+            _Renderer.enabled = false;
+            _Collider.enabled = false;
+            Invoke("CleanUp", _ExplosionTime);
         }
     }
 
+    private void CleanUp()
+    {
+        Destroy(_ExplosionSource.gameObject);
+        Destroy(_ExplosionObject);
+        Destroy(gameObject);
+    }
+
     void Start () {
-		
+        _Renderer = gameObject.GetComponent<Renderer>();
+        _Collider = gameObject.GetComponent<Collider>();
 	}
 	
 	void Update () {
