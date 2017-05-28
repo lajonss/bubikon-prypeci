@@ -9,6 +9,25 @@ public class AKM : MonoBehaviour {
     [SerializeField]
     private float _Range;
 
+    [SerializeField]
+    private Vector3 _DefaultPosition;
+
+    [SerializeField]
+    private Vector3 _DefaultRotation;
+
+    [SerializeField]
+    private Vector3 _ReadyPosition;
+
+    [SerializeField]
+    private Vector3 _ReadyRotation;
+
+    [SerializeField]
+    private Rigidbody _Rocket;
+
+    [SerializeField]
+    private float _FireRate;
+
+    private float _FireRateCounter = 0f;
     private EllipsoidParticleEmitter _Sparks;
 	// Use this for initialization
 	void Start () {
@@ -20,12 +39,14 @@ public class AKM : MonoBehaviour {
 	void Update () {
         Vector3 fwd = transform.TransformDirection(Vector3.forward);
         RaycastHit hit;
+        _FireRateCounter = max(_FireRateCounter - Time.deltaTime, 0f);
 
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire1") && _FireRateCounter <= 0f)
         {
+            _FireRateCounter = _FireRate;
             _Sparks.Emit();
             //audio.Play(); TODO
-
+            /*
             if (Physics.Raycast(transform.position, fwd, out hit))
             {
                 if (hit.transform.tag == "Enemy" && hit.distance < _Range)
@@ -37,7 +58,24 @@ public class AKM : MonoBehaviour {
                 {
                     Debug.Log("Trafiona Sciana");
                 }
-            }
+            } //kod dla karabinu*/ 
+            Rigidbody rocket = Instantiate(_Rocket, transform.position, transform.rotation) as Rigidbody;
+            rocket.AddForce(transform.TransformDirection(Vector3.forward * 1000));
         }
+        if (Input.GetButtonDown("Fire2"))
+        {
+            transform.localPosition = _ReadyPosition;
+            transform.localEulerAngles = _ReadyRotation;
+        }
+        if (Input.GetButtonUp("Fire2"))
+        {
+            transform.localPosition = _DefaultPosition;
+            transform.localEulerAngles = _DefaultRotation;
+        }
+    }
+
+    private static float max(float a, float b)
+    {
+        return a > b ? a : b;
     }
 }
