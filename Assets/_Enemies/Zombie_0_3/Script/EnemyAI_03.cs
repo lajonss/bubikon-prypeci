@@ -4,17 +4,21 @@ using System.Collections;
 
 public class EnemyAI_03 : MonoBehaviour
 {
+    #region public variables
     [SerializeField] public float walkSpeed = 5.0f;
     [SerializeField] public float attackDistance = 3.0f;
     [SerializeField] public float attackDemage = 10.0f;
     [SerializeField] public float attackDelay = 1.0f;
     [SerializeField] public float hp = 20.0f;
     public Transform[] transforms;
+    #endregion
 
+    #region private variables
     private float timer = 0;
     private string currentState;
     private Animator animator;
     private AnimatorStateInfo stateInfo;
+    #endregion
 
     void Start()
     {
@@ -22,16 +26,13 @@ public class EnemyAI_03 : MonoBehaviour
         currentState = "";
     }
 
-    void takeHit(float demage)
+
+    #region trigers
+    void OnTriggerExit(Collider other)
     {
-        hp -= demage;
-        if (hp <= 0)
+        if (other.tag.Equals("Player"))
         {
-            animationSet("death");
-        }
-        else
-        {
-            animator.CrossFade("wound", 0.5f);
+            animationSet("idle0");
         }
     }
 
@@ -59,7 +60,7 @@ public class EnemyAI_03 : MonoBehaviour
                 if (timer <= 0)
                 {
                     animationSet("attack0");
-                    Debug.Log(stateInfo.IsName("Gin"));
+                    // TODO Messenging
                     //other.SendMessage("takeHit", attackDemage);
                     timer = attackDelay;
                 }
@@ -71,15 +72,9 @@ public class EnemyAI_03 : MonoBehaviour
             }
         }
     }
+    #endregion
 
-    void OnTriggerExit(Collider other)
-    {
-        if (other.tag.Equals("Player"))
-        {
-            animationSet("idle0");
-        }
-    }
-
+    #region animation and messaging  
     private void animationReset()
     {
         if (!stateInfo.IsName("Base Layer.idle0"))
@@ -105,6 +100,7 @@ public class EnemyAI_03 : MonoBehaviour
     {
         stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         animationReset();
+
         if (animationToPlay != "run")
         {
             Debug.Log(stateInfo.IsName("Base Layer.wound"));
@@ -113,11 +109,6 @@ public class EnemyAI_03 : MonoBehaviour
         if (currentState == "")
         {
             currentState = animationToPlay;
-            if (currentState != "run")
-            {
-                Debug.Log(currentState);
-            }
-
             if (stateInfo.IsName("Base Layer.walk") && currentState != "walk")
             {
                 animator.SetBool("walkToIdle0", true);
@@ -138,4 +129,18 @@ public class EnemyAI_03 : MonoBehaviour
             currentState = "";
         }
     }
+
+    void takeHit(float demage)
+    {
+        hp -= demage;
+        if (hp <= 0)
+        {
+            animationSet("death");
+        }
+        else
+        {
+            animator.CrossFade("wound", 0.5f);
+        }
+    }
+    #endregion
 }
