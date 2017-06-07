@@ -60,8 +60,15 @@ public class EnemyAI_03 : MonoBehaviour
                 if (timer <= 0)
                 {
                     animationSet("attack0");
-                    // TODO Messenging
-                    //other.SendMessage("takeHit", attackDemage);
+                    var message = new MessageTypes.Damage()
+                    {
+                        Value = attackDemage,
+                        Sender = this.name
+                    };
+                    
+                    var objects = Utility.OverlapSphere(transform.position, attackDistance);
+                    
+                    MessageDispatcher.Send(message, objects);
                     timer = attackDelay;
                 }
             }
@@ -69,6 +76,25 @@ public class EnemyAI_03 : MonoBehaviour
             if (timer > 0)
             {
                 timer -= Time.deltaTime;
+            }
+        }
+    }
+
+    private void Damage(MessageTypes.Damage message)
+    {
+        if (message.Sender != this.name)
+        {
+            Debug.Log("DMG: " + message.Value);
+            hp -= message.Value;
+            Debug.Log("HP: " + hp);
+
+            if (hp <= 0)
+            {
+                animationSet("death");
+            }
+            else
+            {
+                animator.CrossFade("wound", 0.5f);
             }
         }
     }

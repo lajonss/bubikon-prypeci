@@ -5,6 +5,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 
 public class Rocket : MonoBehaviour {
+    #region Inspector Variables
     [SerializeField]
     private GameObject _Explosion;
     [SerializeField]
@@ -14,7 +15,12 @@ public class Rocket : MonoBehaviour {
     [SerializeField]
     private float _Radius;
     [SerializeField]
+    private float _DamageRadius = 1.0f;
+    [SerializeField]
     private float _Force;
+    [SerializeField]
+    private float _Damage = 100.0f;
+    #endregion Inspector Variables
 
     private float _ExplosionTime = 2.5f;
 
@@ -63,6 +69,16 @@ public class Rocket : MonoBehaviour {
 	}
 	
 	void Update () {
-		
-	}
+        var message = new MessageTypes.Damage()
+        {
+            // Why this works
+            // But Value = _Damage * Time.deltaTime; Send always 1 dmg instead of 100?
+            Value = 100.0f * Time.deltaTime,
+            Sender = this.name
+        };
+        
+        var objects = Utility.OverlapSphere(transform.position, _DamageRadius);
+        
+        MessageDispatcher.Send(message, objects);
+    }
 }
