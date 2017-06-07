@@ -1,29 +1,32 @@
-﻿using System;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
 
-public class EnemyAI_03 : MonoBehaviour
-{
+public class EnemyAIMenu_03 : MonoBehaviour {
+
     #region public variables
-    [SerializeField] public float walkSpeed = 5.0f;
-    [SerializeField] public float attackDistance = 3.0f;
-    [SerializeField] public float attackDemage = 10.0f;
-    [SerializeField] public float attackDelay = 1.0f;
-    [SerializeField] public float hp = 20.0f;
     public Transform[] transforms;
     #endregion
 
     #region private variables
-    private float timer = 0;
+    private int counter = 0;
     private string currentState;
     private Animator animator;
     private AnimatorStateInfo stateInfo;
+    private Transform[] checkpointPoints;
+    private float walkSpeed;
     #endregion
 
     void Start()
     {
+        walkSpeed = Random.Range(6.0f, 8.0f);
         animator = this.GetComponent<Animator>();
         currentState = "";
+    }
+
+    void TheStart(Transform[] v)
+    {  
+        checkpointPoints = v;
     }
 
 
@@ -36,11 +39,15 @@ public class EnemyAI_03 : MonoBehaviour
         }
     }
 
-    void OnTriggerStay(Collider other)
+    void Update()
     {
-        if (other.tag.Equals("Player") && hp > 0)
+        if (counter == checkpointPoints.Length)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(other.transform.position - transform.position);
+            Object.Destroy(this.gameObject);
+        }
+        else
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(checkpointPoints[counter].transform.position - transform.position);
             float oryginalX = transform.rotation.x;
             float oryginalZ = transform.rotation.z;
 
@@ -49,55 +56,19 @@ public class EnemyAI_03 : MonoBehaviour
             finalRotation.z = oryginalZ;
             transform.rotation = finalRotation;
 
-            float distance = Vector3.Distance(transform.position, other.transform.position);
-            if (distance > attackDistance && !stateInfo.IsName("Base Layer.wound"))
+            float distance = Vector3.Distance(transform.position, checkpointPoints[counter].transform.position);
+            if (distance < 10.0f)
+            {
+                counter++;
+            }
+            else
             {
                 animationSet("run");
                 transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime);
             }
-            else if (distance <= attackDistance)
-            {
-                if (timer <= 0)
-                {
-                    animationSet("attack0");
-                    var message = new MessageTypes.Damage()
-                    {
-                        Value = attackDemage,
-                        Sender = this.name
-                    };
-                    
-                    var objects = Utility.OverlapSphere(transform.position, attackDistance);
-                    
-                    MessageDispatcher.Send(message, objects);
-                    timer = attackDelay;
-                }
-            }
-
-            if (timer > 0)
-            {
-                timer -= Time.deltaTime;
-            }
         }
     }
 
-    private void Damage(MessageTypes.Damage message)
-    {
-        if (message.Sender != this.name)
-        {
-            Debug.Log("DMG: " + message.Value);
-            hp -= message.Value;
-            Debug.Log("HP: " + hp);
-
-            if (hp <= 0)
-            {
-                animationSet("death");
-            }
-            else
-            {
-                animator.CrossFade("wound", 0.5f);
-            }
-        }
-    }
     #endregion
 
     #region animation and messaging  
@@ -156,17 +127,5 @@ public class EnemyAI_03 : MonoBehaviour
         }
     }
 
-    void takeHit(float demage)
-    {
-        hp -= demage;
-        if (hp <= 0)
-        {
-            animationSet("death");
-        }
-        else
-        {
-            animator.CrossFade("wound", 0.5f);
-        }
-    }
     #endregion
 }

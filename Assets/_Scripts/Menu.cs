@@ -5,7 +5,6 @@ using UnityEngine;
 public class Menu : MonoBehaviour
 {
     public Texture GameLogo;
-    public Texture HopeLogo;
     public float ButtonWidth = 300;
     public float ButtonHeight = 60;
 
