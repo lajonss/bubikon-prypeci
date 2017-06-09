@@ -10,8 +10,10 @@ public class BridgeBuilder : MonoBehaviour
 
     [SerializeField] private GameObject _LeftBridgeEnd;
     [SerializeField] private GameObject _RightBridgeEnd;
-    [SerializeField] private GameObject FPSContoller;
-    [SerializeField] private GameObject Spawner;
+    [SerializeField] private GameObject _FPSContoller;
+    [SerializeField] private GameObject _Spawner;
+    [SerializeField] private GameObject _Light;
+    [SerializeField] private float _FightLightIntensity;
 
     private Boolean isBuiding = true;
     private Camera _Camera;
@@ -77,11 +79,11 @@ public class BridgeBuilder : MonoBehaviour
             }
             if (IsValid())
             {
-                //                var instantiate = Instantiate(FPSContoller, new Vector3(-59, 2, 20), Quaternion.identity);
-                FPSContoller.active = true;
-                FPSContoller.GetComponentInChildren<Camera>().enabled = true;
-                Spawner.GetComponent<GameEnemySpawner>().startSpawning();
+                _FPSContoller.SetActive(true);
+                _FPSContoller.GetComponentInChildren<Camera>().enabled = true;
+                _Spawner.GetComponent<GameEnemySpawner>().startSpawning();
                 isBuiding = false;
+                _Light.GetComponent<Light>().intensity = _FightLightIntensity;
                 EnablePhysicsOnBridge();
             }
         }
