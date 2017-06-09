@@ -13,6 +13,7 @@ public class getDmg : MonoBehaviour {
         if (message.Target == gameObject.tag)
         {
             hp -= message.Value;
+            Debug.Log(hp);
         }
     }
 }
