@@ -146,10 +146,7 @@ public class EnemyAIGame_03 : MonoBehaviour
     {
         if (message.Sender != this.name)
         {
-            Debug.Log("DMG: " + message.Value);
             hp -= message.Value;
-            Debug.Log("HP: " + hp);
-
             if (hp <= 0)
             {
                 animationSet("death");
