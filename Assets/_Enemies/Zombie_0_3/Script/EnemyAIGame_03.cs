@@ -12,7 +12,6 @@ public class EnemyAIGame_03 : MonoBehaviour
     [SerializeField] private float attackDistance = 3.0f;
     [SerializeField] private float attackDemage = 10.0f;
     [SerializeField] private float attackDelay = 1.0f;
-    [SerializeField] private float hp = 20.0f;
     [SerializeField] private Transform[] transforms;
 
     #endregion
@@ -64,6 +63,15 @@ public class EnemyAIGame_03 : MonoBehaviour
 
     void Update()
     {
+        var getDmg = GetComponent<getDmg>();
+        if (getDmg != null && getDmg.hp <= 0)
+        {
+            animationSet("death");
+        }
+        else
+        {
+            animator.CrossFade("wound", 0.5f);
+        }
         if (inTheTrigger == false && checkpointPoints != null)
         {
             if (checkpointCounter == checkpointPoints.Length)
@@ -99,7 +107,9 @@ public class EnemyAIGame_03 : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        if (other.tag.Equals("Player") && hp > 0)
+        var getDmg = GetComponent<getDmg>();
+
+        if (other.tag.Equals("Player") && (getDmg == null || (getDmg != null && getDmg.hp > 0)))
         {
             Quaternion targetRotation = Quaternion.LookRotation(other.transform.position - transform.position);
             float oryginalX = transform.rotation.x;
@@ -122,15 +132,6 @@ public class EnemyAIGame_03 : MonoBehaviour
                 if (timer <= 0)
                 {
                     animationSet("attack0");
-                    var message = new MessageTypes.Damage()
-                    {
-                        Value = attackDemage,
-                        Sender = this.name
-                    };
-
-                    var objects = Utility.OverlapSphere(transform.position, attackDistance);
-
-                    MessageDispatcher.Send(message, objects);
                     timer = attackDelay;
                 }
             }
@@ -141,28 +142,11 @@ public class EnemyAIGame_03 : MonoBehaviour
             }
         }
     }
-
-    private void Damage(MessageTypes.Damage message)
-    {
-        if (message.Sender != this.name)
-        {
-            hp -= message.Value;
-            if (hp <= 0)
-            {
-                animationSet("death");
-                Invoke("destroyMe", 4.5f);
-            }
-            else
-            {
-                animator.CrossFade("wound", 0.5f);
-            }
-        }
-    }
-
     private void destroyMe()
     {
         Destroy(this.gameObject);
     }
+
 
     #endregion
 
@@ -215,19 +199,6 @@ public class EnemyAIGame_03 : MonoBehaviour
             string state = "idle0To" + currentState.Substring(0, 1).ToUpper() + currentState.Substring(1);
             animator.SetBool(state, true);
             currentState = "";
-        }
-    }
-
-    void takeHit(float demage)
-    {
-        hp -= demage;
-        if (hp <= 0)
-        {
-            animationSet("death");
-        }
-        else
-        {
-            animator.CrossFade("wound", 0.5f);
         }
     }
 

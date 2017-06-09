@@ -67,18 +67,4 @@ public class Rocket : MonoBehaviour {
         _Renderer = gameObject.GetComponent<Renderer>();
         _Collider = gameObject.GetComponent<Collider>();
 	}
-	
-	void Update () {
-        var message = new MessageTypes.Damage()
-        {
-            // Why this works
-            // But Value = _Damage * Time.deltaTime; Send always 1 dmg instead of 100?
-            Value = 100.0f * Time.deltaTime,
-            Sender = this.name
-        };
-        
-        var objects = Utility.OverlapSphere(transform.position, _DamageRadius);
-        
-        MessageDispatcher.Send(message, objects);
-    }
 }
