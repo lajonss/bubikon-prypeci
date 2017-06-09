@@ -42,7 +42,7 @@ public class EndGameDetector : MonoBehaviour {
     {
         if(_GameEnd)
         {
-            GUI.Label(new Rect(0, 20, 500, 200), _Score.ToString());
+            GUI.Label(new Rect(0, 20, 500, 200), "Your score:"  + Mathf.Abs(_Score));
         }
     }
 }
