@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
-using UnityEngine.VR.WSA.Input;
 using Random = UnityEngine.Random;
 
 public class GameEnemySpawner : MonoBehaviour
@@ -58,9 +56,9 @@ public class GameEnemySpawner : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(200, 100, 200, 50), "Bubikons enemies: " + enemiesNumber.ToString());
-        GUI.Label(new Rect(200, 150, 200, 50), "Question wave: " + waveNumber.ToString());
-        GUI.Label(new Rect(200, 200, 200, 50), "Test score: " + testScore);
+        GUI.Label(new Rect(200, 100, 200, 50), "Bubikony: " + enemiesNumber);
+        GUI.Label(new Rect(200, 150, 200, 50), "Nr pytania: " + waveNumber);
+        GUI.Label(new Rect(200, 200, 200, 50), "Szansa na zdanie: " + testScore);
     }
 
     void Spawn()
