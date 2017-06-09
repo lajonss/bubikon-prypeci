@@ -19,7 +19,6 @@ public class EndGameDetector : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("pozdrawiam " + other.gameObject.name);
         if (other.gameObject.tag.Equals("Bridge") || other.gameObject.tag.Equals("Player"))
         {
             EndGame();
