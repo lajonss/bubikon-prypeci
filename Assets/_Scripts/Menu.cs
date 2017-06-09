@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class Menu : MonoBehaviour
 {
-    public Texture GameLogo;
-    public float ButtonWidth = 300;
-    public float ButtonHeight = 60;
-
+    [SerializeField] private Texture GameLogo;
+    private float ButtonWidth = 300;
+    private float ButtonHeight = 60;
     private float ButtonMargin = 20;
 
     void OnGUI()
