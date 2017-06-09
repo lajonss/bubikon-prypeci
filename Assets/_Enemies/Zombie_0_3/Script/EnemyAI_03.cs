@@ -65,15 +65,6 @@ public class EnemyAI_03 : MonoBehaviour
                 if (timer <= 0)
                 {
                     animationSet("attack0");
-                    var message = new MessageTypes.Damage()
-                    {
-                        Value = attackDemage,
-                        Sender = this.name
-                    };
-
-                    var objects = Utility.OverlapSphere(transform.position, attackDistance);
-
-                    MessageDispatcher.Send(message, objects);
                     timer = attackDelay;
                 }
             }
@@ -84,27 +75,6 @@ public class EnemyAI_03 : MonoBehaviour
             }
         }
     }
-
-    private void Damage(MessageTypes.Damage message)
-    {
-        if (message.Sender != this.name)
-        {
-            Debug.Log("DMG: " + message.Value);
-            hp -= message.Value;
-            Debug.Log("HP: " + hp);
-
-            if (hp <= 0)
-            {
-                animationSet("death");
-                Invoke("destroyMe", 2.5f);
-            }
-            else
-            {
-                animator.CrossFade("wound", 0.5f);
-            }
-        }
-    }
-
     #endregion
 
     private void destroyMe()
@@ -169,9 +139,8 @@ public class EnemyAI_03 : MonoBehaviour
         }
     }
 
-    void takeHit(float demage)
+     public void Update()
     {
-        hp -= demage;
         if (hp <= 0)
         {
             animationSet("death");
