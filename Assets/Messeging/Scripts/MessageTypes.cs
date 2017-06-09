@@ -10,7 +10,8 @@ public class MessageTypes : MonoBehaviour {
     public class Damage
     {
         public float Value;
-        public int Sender;
+        public string Sender;
+        public string Target;
     }
     #endregion Health
 }

@@ -13,7 +13,7 @@ public class EnemyAIGame_03 : MonoBehaviour
     [SerializeField] private float attackDemage = 10.0f;
     [SerializeField] private float attackDelay = 1.0f;
     [SerializeField] private Transform[] transforms;
-
+    private Component getDmg;
     #endregion
 
     #region private variables
@@ -30,6 +30,8 @@ public class EnemyAIGame_03 : MonoBehaviour
 
     void Start()
     {
+
+        getDmg = GetComponent<getDmg>();
         inTheTrigger = false;
         animator = this.GetComponent<Animator>();
         currentState = "";
@@ -63,14 +65,10 @@ public class EnemyAIGame_03 : MonoBehaviour
 
     void Update()
     {
-        var getDmg = GetComponent<getDmg>();
-        if (getDmg != null && getDmg.hp <= 0)
+        if (getDmg != null && ((getDmg) getDmg).hp <= 0)
         {
             animationSet("death");
-        }
-        else
-        {
-            animator.CrossFade("wound", 0.5f);
+            Invoke("destroyMe", 4.5f);
         }
         if (inTheTrigger == false && checkpointPoints != null)
         {

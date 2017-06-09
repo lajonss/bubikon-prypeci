@@ -9,7 +9,8 @@ public class getDmg : MonoBehaviour {
 
     private void Damage(MessageTypes.Damage message)
     {
-        if (message.Sender != gameObject.GetInstanceID())
+        
+        if (message.Target == gameObject.tag)
         {
             hp -= message.Value;
         }

@@ -8,21 +8,33 @@ public class dealDmg : MonoBehaviour {
     private float _Damage = 100.0f;
     [SerializeField]
     private float _DamageRadius = 1.0f;
+    [SerializeField]
+    private float _attackDeley = 1.0f;
+    [SerializeField]
+    private string _target = "";
+
+    private float attackCounter = 0;
     #endregion Inspector Variables
 
     #region Overrided Methods
     void Update () {
-        var message = new MessageTypes.Damage()
+        attackCounter -= Time.deltaTime;
+        if (attackCounter <= 0)
         {
-            // Why this works
-            // But Value = _Damage * Time.deltaTime; Send always 1 dmg instead of 100?
-            Value = _Damage * Time.deltaTime,
-            Sender = gameObject.GetInstanceID()
-        };
-        
-        var objects = Utility.OverlapSphere(transform.position, _DamageRadius);
+            var message = new MessageTypes.Damage()
+            {
+                // Why this works
+                // But Value = _Damage * Time.deltaTime; Send always 1 dmg instead of 100?
+                Value = _Damage,
+                Sender = gameObject.tag,
+                Target = _target
+            };
 
-        MessageDispatcher.Send(message, objects);
+            var objects = Utility.OverlapSphere(transform.position, _DamageRadius);
+
+            MessageDispatcher.Send(message, objects);
+            attackCounter = _attackDeley;
+        }
     }
     #endregion Overrided Methods
 }
