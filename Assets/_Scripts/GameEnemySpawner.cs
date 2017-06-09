@@ -26,6 +26,7 @@ public class GameEnemySpawner : MonoBehaviour
     private int spawnedEnemies = 0;
     private Boolean nextRound = false;
     private Boolean incrementWave = true;
+    private Boolean isGameRunning = false;
 
     #endregion
 
@@ -39,7 +40,7 @@ public class GameEnemySpawner : MonoBehaviour
     void Update()
     {
         enemiesNumber = GameObject.FindObjectsOfType(typeof(EnemyAIGame_03)).Length;
-        if (enemiesNumber == 0)
+        if (enemiesNumber == 0 && isGameRunning)
         {
             if (incrementWave == true)
             {
@@ -77,5 +78,10 @@ public class GameEnemySpawner : MonoBehaviour
             }
         }
 
+    }
+
+    public void startSpawning()
+    {
+        isGameRunning = true;
     }
 }
