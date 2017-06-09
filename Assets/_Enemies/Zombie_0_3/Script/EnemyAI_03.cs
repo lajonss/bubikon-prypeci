@@ -1,22 +1,28 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using Object = UnityEngine.Object;
 
 public class EnemyAI_03 : MonoBehaviour
 {
     #region public variables
-    [SerializeField] public float walkSpeed = 5.0f;
-    [SerializeField] public float attackDistance = 3.0f;
-    [SerializeField] public float attackDemage = 10.0f;
-    [SerializeField] public float attackDelay = 1.0f;
-    public Transform[] transforms;
+
+    [SerializeField] private float walkSpeed = 5.0f;
+    [SerializeField] private float attackDistance = 3.0f;
+    [SerializeField] private float attackDemage = 10.0f;
+    [SerializeField] private float attackDelay = 1.0f;
+    [SerializeField] private float hp = 20.0f;
+    [SerializeField] private Transform[] transforms;
+
     #endregion
 
     #region private variables
+
     private float timer = 0;
     private string currentState;
     private Animator animator;
     private AnimatorStateInfo stateInfo;
+
     #endregion
 
     void Start()
@@ -25,8 +31,8 @@ public class EnemyAI_03 : MonoBehaviour
         currentState = "";
     }
 
-
     #region trigers
+
     void OnTriggerExit(Collider other)
     {
         if (other.tag.Equals("Player"))
@@ -37,8 +43,7 @@ public class EnemyAI_03 : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        var getDmgComponent = GetComponent<getDmg>();
-        if (other.tag.Equals("Player") && (getDmgComponent != null && getDmgComponent.hp > 0))
+        if (other.tag.Equals("Player") && hp > 0)
         {
             Quaternion targetRotation = Quaternion.LookRotation(other.transform.position - transform.position);
             float oryginalX = transform.rotation.x;
@@ -60,6 +65,15 @@ public class EnemyAI_03 : MonoBehaviour
                 if (timer <= 0)
                 {
                     animationSet("attack0");
+                    var message = new MessageTypes.Damage()
+                    {
+                        Value = attackDemage,
+                        Sender = this.name
+                    };
+
+                    var objects = Utility.OverlapSphere(transform.position, attackDistance);
+
+                    MessageDispatcher.Send(message, objects);
                     timer = attackDelay;
                 }
             }
@@ -70,9 +84,36 @@ public class EnemyAI_03 : MonoBehaviour
             }
         }
     }
+
+    private void Damage(MessageTypes.Damage message)
+    {
+        if (message.Sender != this.name)
+        {
+            Debug.Log("DMG: " + message.Value);
+            hp -= message.Value;
+            Debug.Log("HP: " + hp);
+
+            if (hp <= 0)
+            {
+                animationSet("death");
+                Invoke("destroyMe", 2.5f);
+            }
+            else
+            {
+                animator.CrossFade("wound", 0.5f);
+            }
+        }
+    }
+
     #endregion
 
+    private void destroyMe()
+    {
+        Object.Destroy(this.gameObject);
+    }
+
     #region animation and messaging  
+
     private void animationReset()
     {
         if (!stateInfo.IsName("Base Layer.idle0"))
@@ -128,20 +169,18 @@ public class EnemyAI_03 : MonoBehaviour
         }
     }
 
-    void Update()
+    void takeHit(float demage)
     {
-        var getDmgComponent = GetComponent<getDmg>();
-        if (getDmgComponent != null)
+        hp -= demage;
+        if (hp <= 0)
         {
-            if (getDmgComponent.hp <= 0)
-            {
-                animationSet("death");
-            }
-            else
-            {
-                animator.CrossFade("wound", 0.5f);
-            }
+            animationSet("death");
+        }
+        else
+        {
+            animator.CrossFade("wound", 0.5f);
         }
     }
+
     #endregion
 }
