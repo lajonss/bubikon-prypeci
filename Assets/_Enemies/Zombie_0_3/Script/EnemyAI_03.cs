@@ -1,23 +1,28 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using Object = UnityEngine.Object;
 
 public class EnemyAI_03 : MonoBehaviour
 {
     #region public variables
-    [SerializeField] public float walkSpeed = 5.0f;
-    [SerializeField] public float attackDistance = 3.0f;
-    [SerializeField] public float attackDemage = 10.0f;
-    [SerializeField] public float attackDelay = 1.0f;
-    [SerializeField] public float hp = 20.0f;
-    public Transform[] transforms;
+
+    [SerializeField] private float walkSpeed = 5.0f;
+    [SerializeField] private float attackDistance = 3.0f;
+    [SerializeField] private float attackDemage = 10.0f;
+    [SerializeField] private float attackDelay = 1.0f;
+    [SerializeField] private float hp = 20.0f;
+    [SerializeField] private Transform[] transforms;
+
     #endregion
 
     #region private variables
+
     private float timer = 0;
     private string currentState;
     private Animator animator;
     private AnimatorStateInfo stateInfo;
+
     #endregion
 
     void Start()
@@ -26,8 +31,8 @@ public class EnemyAI_03 : MonoBehaviour
         currentState = "";
     }
 
-
     #region trigers
+
     void OnTriggerExit(Collider other)
     {
         if (other.tag.Equals("Player"))
@@ -65,9 +70,9 @@ public class EnemyAI_03 : MonoBehaviour
                         Value = attackDemage,
                         Sender = this.name
                     };
-                    
+
                     var objects = Utility.OverlapSphere(transform.position, attackDistance);
-                    
+
                     MessageDispatcher.Send(message, objects);
                     timer = attackDelay;
                 }
@@ -91,6 +96,7 @@ public class EnemyAI_03 : MonoBehaviour
             if (hp <= 0)
             {
                 animationSet("death");
+                Invoke("destroyMe", 2.5f);
             }
             else
             {
@@ -98,9 +104,16 @@ public class EnemyAI_03 : MonoBehaviour
             }
         }
     }
+
     #endregion
 
+    private void destroyMe()
+    {
+        Object.Destroy(this.gameObject);
+    }
+
     #region animation and messaging  
+
     private void animationReset()
     {
         if (!stateInfo.IsName("Base Layer.idle0"))
@@ -168,5 +181,6 @@ public class EnemyAI_03 : MonoBehaviour
             animator.CrossFade("wound", 0.5f);
         }
     }
+
     #endregion
 }

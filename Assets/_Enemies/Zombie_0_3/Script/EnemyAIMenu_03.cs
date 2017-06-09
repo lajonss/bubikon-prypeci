@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class EnemyAIMenu_03 : MonoBehaviour {
 
-    #region public variables
-    public Transform[] transforms;
+    #region serialize fields variables
+    [SerializeField] private Transform[] transforms;
     #endregion
 
     #region private variables
