@@ -39,7 +39,7 @@ public class BridgeBuilder : MonoBehaviour
                         var position = new Vector3(t.position.x + t.localScale.x * hit.normal.x, t.position.y,
                             t.position.z + t.localScale.z * hit.normal.z);
                         var fragment = Instantiate(_BridgeFragment, position, t.rotation);
-                        fragment.transform.localScale = t.localScale;
+                        fragment.transform.localScale = t.localScale * 0.995f;
 
                         var bunkrowNieMa = fragment.GetComponent<HingeJoint>();
                         bunkrowNieMa.connectedBody = hit.collider.gameObject.GetComponent<Rigidbody>();
