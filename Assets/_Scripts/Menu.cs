@@ -15,6 +15,8 @@ public class Menu : MonoBehaviour
         GUI.DrawTexture(new Rect(0, 20, 500, 200), GameLogo);
         if (GUI.Button(new Rect(300, 300, ButtonWidth, ButtonHeight), "Przystąp do zerówki"))
         {
+            PlayerPrefs.SetFloat("StartTime", System.DateTime.Now.Hour * 100 + System.DateTime.Now.Minute * 10 + System.DateTime.Now.Second);
+            PlayerPrefs.Save();
             Application.LoadLevel("main");
         }
         if (GUI.Button(new Rect(300, 300 + (ButtonHeight + ButtonMargin), ButtonWidth, ButtonHeight), "Dziekanka..."))

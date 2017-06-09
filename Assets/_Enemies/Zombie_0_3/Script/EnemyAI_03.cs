@@ -9,7 +9,6 @@ public class EnemyAI_03 : MonoBehaviour
     [SerializeField] public float attackDistance = 3.0f;
     [SerializeField] public float attackDemage = 10.0f;
     [SerializeField] public float attackDelay = 1.0f;
-    [SerializeField] public float hp = 20.0f;
     public Transform[] transforms;
     #endregion
 
@@ -38,7 +37,8 @@ public class EnemyAI_03 : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        if (other.tag.Equals("Player") && hp > 0)
+        var getDmgComponent = GetComponent<getDmg>();
+        if (other.tag.Equals("Player") && (getDmgComponent != null && getDmgComponent.hp > 0))
         {
             Quaternion targetRotation = Quaternion.LookRotation(other.transform.position - transform.position);
             float oryginalX = transform.rotation.x;
@@ -60,15 +60,6 @@ public class EnemyAI_03 : MonoBehaviour
                 if (timer <= 0)
                 {
                     animationSet("attack0");
-                    var message = new MessageTypes.Damage()
-                    {
-                        Value = attackDemage,
-                        Sender = this.name
-                    };
-                    
-                    var objects = Utility.OverlapSphere(transform.position, attackDistance);
-                    
-                    MessageDispatcher.Send(message, objects);
                     timer = attackDelay;
                 }
             }
@@ -76,25 +67,6 @@ public class EnemyAI_03 : MonoBehaviour
             if (timer > 0)
             {
                 timer -= Time.deltaTime;
-            }
-        }
-    }
-
-    private void Damage(MessageTypes.Damage message)
-    {
-        if (message.Sender != this.name)
-        {
-            Debug.Log("DMG: " + message.Value);
-            hp -= message.Value;
-            Debug.Log("HP: " + hp);
-
-            if (hp <= 0)
-            {
-                animationSet("death");
-            }
-            else
-            {
-                animator.CrossFade("wound", 0.5f);
             }
         }
     }
@@ -156,16 +128,19 @@ public class EnemyAI_03 : MonoBehaviour
         }
     }
 
-    void takeHit(float demage)
+    void Update()
     {
-        hp -= demage;
-        if (hp <= 0)
+        var getDmgComponent = GetComponent<getDmg>();
+        if (getDmgComponent != null)
         {
-            animationSet("death");
-        }
-        else
-        {
-            animator.CrossFade("wound", 0.5f);
+            if (getDmgComponent.hp <= 0)
+            {
+                animationSet("death");
+            }
+            else
+            {
+                animator.CrossFade("wound", 0.5f);
+            }
         }
     }
     #endregion
